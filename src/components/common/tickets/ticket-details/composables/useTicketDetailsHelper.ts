@@ -99,7 +99,10 @@ export function useTicketDetailsHelper() {
       ticketInfo.value = { ...response.payload }
       await router.push({ name: "Tickets" })
     } catch (e) {
-      message.error("Ошибка при обновлении заявки")
+      console.log((e as any).response.data.message)
+      message.error(
+        (e as any).response.data.message || "Ошибка при создании заявки"
+      )
       console.error("Error in updateTicket:", e)
     } finally {
       loading.value = false
@@ -108,6 +111,8 @@ export function useTicketDetailsHelper() {
   async function createTicket(ticket: TicketCreatePayload) {
     loading.value = true
     try {
+      ticket.technical_tasks_details = undefined as any
+      ticket.technical_tasks_preview = undefined as any
       const response = await createTicketReq(ticket)
       if (response.status === "error") {
         message.error(response.message || "Ошибка при cоздании заявки")
@@ -118,7 +123,10 @@ export function useTicketDetailsHelper() {
       await router.push({ name: "Tickets" })
     } catch (e) {
       console.error("Error in updateTicket:", e)
-      message.error("Ошибка при создании заявки")
+      console.log((e as any).response.data.message)
+      message.error(
+        (e as any).response.data.message || "Ошибка при создании заявки"
+      )
     } finally {
       loading.value = false
     }

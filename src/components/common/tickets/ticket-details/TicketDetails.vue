@@ -65,13 +65,12 @@
           />
         </section>
       </n-form>
-      <n-divider />
-      <div>
+      <div v-if="isUpdateForm">
+        <n-divider />
         <n-h2>QR-код для закрытия заявки</n-h2>
         <n-qr-code :value="qrCode" />
+        <n-divider />
       </div>
-
-      <n-divider />
 
       <div class="ticket-details__action">
         <n-button type="primary" @click="saveTicket" :loading="loading">
