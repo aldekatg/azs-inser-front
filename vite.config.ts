@@ -8,7 +8,7 @@ import { NaiveUiResolver } from "unplugin-vue-components/resolvers"
 // https://vite.dev/config/
 export default defineConfig({
   server: {
-    port: 5137,
+    port: 6137,
   },
   resolve: {
     alias: {

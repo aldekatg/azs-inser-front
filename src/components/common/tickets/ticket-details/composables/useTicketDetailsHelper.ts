@@ -88,6 +88,8 @@ export function useTicketDetailsHelper() {
   async function updateTicket(ticket: TicketUpdatePayload, ticketId: number) {
     loading.value = true
     try {
+      ticket.technical_tasks_details = undefined as any
+      ticket.technical_tasks_preview = undefined as any
       const response = await updateTicketById(ticketId, ticket)
       if (response.status === "error") {
         message.error(response.message || "Ошибка при обновлении заявки")
@@ -95,12 +97,12 @@ export function useTicketDetailsHelper() {
       }
       message.success("Заявка успешно обновлена")
       ticketInfo.value = { ...response.payload }
+      await router.push({ name: "Tickets" })
     } catch (e) {
       message.error("Ошибка при обновлении заявки")
       console.error("Error in updateTicket:", e)
     } finally {
       loading.value = false
-      await router.push({ name: "Tickets" })
     }
   }
   async function createTicket(ticket: TicketCreatePayload) {
