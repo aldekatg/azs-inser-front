@@ -65,6 +65,13 @@
           />
         </section>
       </n-form>
+      <n-divider />
+      <div>
+        <n-h2>QR-код для закрытия заявки</n-h2>
+        <n-qr-code :value="qrCode" />
+      </div>
+
+      <n-divider />
 
       <div class="ticket-details__action">
         <n-button type="primary" @click="saveTicket" :loading="loading">
@@ -92,6 +99,7 @@
     TicketUpdatePayload,
   } from "@/api/tickets/types.ts"
   import { criticalityOptions, statusOptions } from "@/utils"
+  import { config } from "@/config/config"
   const { type, formData, loading, rules, ticket, ticketId } = defineProps<
     | {
         type: "create"
@@ -176,6 +184,11 @@
     if (value === null) return fallback ?? new Date().toISOString()
     return new Date(value).toISOString()
   }
+
+  const qrCode = computed(() => {
+    if (!ticket?.guid || !ticketId) return ""
+    return `${config.QR_BASE_URL}/confirmQR?guid=${ticket.guid}&id=${ticketId}`
+  })
 
   watch(
     () => formData,

@@ -1,6 +1,6 @@
 <template>
   <div class="login-container">
-    <n-card title="Авторизация" class="card">
+    <n-card title="Авторизация АЗС" class="card">
       <n-form :model="formValue" :rules="rules" ref="formRef" :label-width="80">
         <n-form-item label="Логин" path="mail">
           <n-input
