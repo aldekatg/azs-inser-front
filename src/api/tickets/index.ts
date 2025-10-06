@@ -1,7 +1,6 @@
 import { Response, SortedFieldsType } from "@/types.ts"
 import { api, objectToUrlParams } from "@/api"
 import {
-  MaterialResponse,
   TicketCreatePayload,
   TicketDetails,
   TicketsResponse,
@@ -9,9 +8,7 @@ import {
 } from "@/api/tickets/types.ts"
 
 const URLS = {
-  getTickets: "/tickets",
-  getMaterials: "/integrations/onec/warehouses/",
-  confirmQR: "/tickets",
+  getTickets: "/gs/tickets",
 }
 
 // Tickets
@@ -35,18 +32,4 @@ export const updateTicketById = async (id: number, body: TicketUpdatePayload) =>
 export const createTicketReq = async (body: TicketCreatePayload) =>
   api
     .post<Response<TicketDetails>>(URLS.getTickets, body)
-    .then((resp) => resp.data)
-
-// 1C Integration
-export const fetchMaterials = async (guid: string) =>
-  api
-    .get<
-      Response<MaterialResponse[]>
-    >(URLS.getMaterials + `${guid}/remaining-goods`)
-    .then((resp) => resp.data)
-
-// QR Code Confirmation
-export const confirmQRCode = async (id: string, guid: string) =>
-  api
-    .post(`${URLS.confirmQR}/${id}/confirm-qr`, { guid })
     .then((resp) => resp.data)

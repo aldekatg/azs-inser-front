@@ -27,31 +27,9 @@
           </n-space>
         </n-space>
       </n-layout-header>
-      <n-layout has-sider position="absolute" style="top: 70px">
-        <n-layout-sider
-          bordered
-          collapse-mode="width"
-          :collapsed-width="64"
-          :width="260"
-          :collapsed="collapsed"
-          show-trigger
-          class="slider-custom"
-          @collapse="collapsed = true"
-          @expand="collapsed = false"
-        >
-          <n-menu
-            :router="true"
-            :collapsed-width="64"
-            :collapsed-icon-size="22"
-            :collapsed="collapsed"
-            :options="menuOptions"
-            :value="activeKey"
-          />
-        </n-layout-sider>
-        <n-layout ref="mainContentBodyRef" @scroll="onScrollHandler">
-          <slot name="content"></slot>
-        </n-layout>
-      </n-layout>
+      <n-layout-content style="padding: 20px">
+        <slot />
+      </n-layout-content>
     </n-layout>
   </div>
 </template>
@@ -69,8 +47,7 @@
   import { useAuthStore } from "@/store/useAuthStore.ts"
 
   const authStore = useAuthStore()
-  const { menuOptions, options } = useNavHook()
-  const collapsed = ref(true)
+  const { options } = useNavHook()
 
   // const contentRef = ref<LayoutInst | null>(null)
   const mainContentBodyRef = ref<LayoutInst | null>(null)
@@ -104,11 +81,6 @@
 
   function goHome() {
     router.push({ name: "Home" })
-  }
-
-  function onScrollHandler(event: Event) {
-    const element = event.target as HTMLElement
-    scrollTopRef.value = element.scrollTop
   }
 </script>
 <style lang="scss" scoped>

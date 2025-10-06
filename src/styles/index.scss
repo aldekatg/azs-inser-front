@@ -107,3 +107,100 @@ body {
     height: 100%;
   }
 }
+
+// Адаптивные стили для компонентов Naive UI на мобильных устройствах
+@media (max-width: $mobile) {
+  // Уменьшаем размеры кнопок
+  .n-button {
+    font-size: rem(12) !important;
+    padding: rem(6) rem(12) !important;
+  }
+
+  // Уменьшаем размеры инпутов
+  .n-input {
+    font-size: rem(12) !important;
+
+    .n-input__input-el {
+      font-size: rem(12) !important;
+    }
+  }
+
+  // Уменьшаем размеры селектов
+  .n-select {
+    font-size: rem(12) !important;
+
+    .n-base-selection {
+      font-size: rem(12) !important;
+    }
+  }
+
+  // Уменьшаем размеры заголовков
+  .n-h1 {
+    font-size: rem(20) !important;
+  }
+  .n-h2 {
+    font-size: rem(18) !important;
+  }
+  .n-h3 {
+    font-size: rem(16) !important;
+  }
+  .n-h4 {
+    font-size: rem(14) !important;
+  }
+  .n-h5 {
+    font-size: rem(12) !important;
+  }
+  .n-h6 {
+    font-size: rem(11) !important;
+  }
+
+  // Уменьшаем размеры таблиц
+  .n-data-table {
+    font-size: rem(12) !important;
+
+    .n-data-table-th,
+    .n-data-table-td {
+      font-size: rem(12) !important;
+      padding: rem(6) rem(8) !important;
+    }
+  }
+
+  // Уменьшаем размеры форм
+  .n-form-item-label {
+    font-size: rem(12) !important;
+  }
+}
+
+@media (max-width: $mobileSmall) {
+  // Еще больше уменьшаем для маленьких экранов
+  .n-button {
+    font-size: rem(11) !important;
+    padding: rem(4) rem(8) !important;
+  }
+
+  .n-input {
+    font-size: rem(11) !important;
+
+    .n-input__input-el {
+      font-size: rem(11) !important;
+    }
+  }
+
+  .n-select {
+    font-size: rem(11) !important;
+
+    .n-base-selection {
+      font-size: rem(11) !important;
+    }
+  }
+
+  .n-data-table {
+    font-size: rem(11) !important;
+
+    .n-data-table-th,
+    .n-data-table-td {
+      font-size: rem(11) !important;
+      padding: rem(4) rem(6) !important;
+    }
+  }
+}

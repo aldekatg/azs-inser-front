@@ -10,8 +10,6 @@ import {
   TicketDetails,
   TicketUpdatePayload,
 } from "@/api/tickets/types.ts"
-import { fetchChecklistItems, fetchChecklists } from "@/api/tariffs"
-import { ChecklistItemsType, ChecklistType } from "@/api/gas-stations/types.ts"
 import { useRouter } from "vue-router"
 
 export function useTicketDetailsHelper() {
@@ -21,54 +19,20 @@ export function useTicketDetailsHelper() {
   const ticketInfo = ref<TicketDetails>()
   const loading = ref(false)
 
-  const checklists = ref<ChecklistType[]>()
-  const checklistItems = ref<ChecklistItemsType[]>()
-
   const formValue = ref<TicketUpdatePayload>({
-    gas_station_id: null,
     status: "",
     criticality: "",
-    ticket_type: "",
-    submitted_at: new Date().getTime(),
+    ticket_number: "",
+    submitted_at: "",
     technical_tasks_preview: [],
     technical_tasks_details: [],
     content: "",
-    employee_id: null,
-    employee: null,
-    materials: {},
-    id: null,
-    guid: "",
-    comment: null,
-    service_sheet_number: null,
-    ticket_number: null,
-    diagnostic_result: null,
-    created_at: "",
-    updated_at: "",
-    planned_finish_at: "",
-    closed_at: null,
-    work_started_at: new Date().getTime(),
-    work_finished_at: new Date().getTime(),
-    work_result: "",
-    escalation_timeout_minutes: 0,
-    escalation_due_at: "",
   })
   const rules = {
     ticket_number: {
       required: true,
       type: "text",
       message: "Номер заявки обязателен",
-      trigger: ["blur", "input"],
-    },
-    gas_station_id: {
-      required: true,
-      type: "number",
-      message: "АЗС обязательна",
-      trigger: ["blur", "input"],
-    },
-    employee_id: {
-      required: true,
-      type: "number",
-      message: "Ответственный сотрудник обязателен",
       trigger: ["blur", "input"],
     },
     status: {
@@ -81,14 +45,9 @@ export function useTicketDetailsHelper() {
       message: "Критичность обязательна",
       trigger: ["blur", "input"],
     },
-    ticket_type: {
-      required: true,
-      message: "Тип заявки обязателен",
-      trigger: ["blur", "input"],
-    },
     submitted_at: {
-      required: false,
-      type: "number",
+      required: true,
+      type: "string",
       message: "Дата подачи обязательна",
       trigger: ["blur", "change"],
     },
@@ -107,7 +66,17 @@ export function useTicketDetailsHelper() {
         message.error(response.message || "Ошибка при загрузке заявок")
         return
       }
-      formValue.value = { ...response.payload }
+      // Извлекаем только нужные поля для формы
+      const ticket = response.payload
+      formValue.value = {
+        status: ticket.status,
+        criticality: ticket.criticality,
+        ticket_number: ticket.ticket_number || "",
+        submitted_at: ticket.submitted_at,
+        technical_tasks_preview: ticket.technical_tasks_preview, // Используем оригинальный массив строк
+        technical_tasks_details: ticket.technical_tasks_details,
+        content: ticket.content,
+      }
       ticketInfo.value = response.payload
     } catch (e) {
       console.error("Error in initTicketById:", e)
@@ -116,33 +85,10 @@ export function useTicketDetailsHelper() {
     }
   }
 
-  async function initCheckLists() {
+  async function updateTicket(ticket: TicketUpdatePayload, ticketId: number) {
     loading.value = true
     try {
-      const [checklistResponse, checklistItemsResponse] = await Promise.all([
-        fetchChecklists(),
-        fetchChecklistItems(),
-      ])
-
-      if (
-        checklistResponse.status === "error" ||
-        checklistItemsResponse.status === "error"
-      ) {
-        message.error("Ошибка обработки чеклистов")
-      }
-
-      checklists.value = checklistResponse.payload.items
-      checklistItems.value = checklistItemsResponse.payload.items
-    } catch (e) {
-    } finally {
-      loading.value = false
-    }
-  }
-
-  async function updateTicket(ticket: TicketUpdatePayload) {
-    loading.value = true
-    try {
-      const response = await updateTicketById(ticket.id!, ticket)
+      const response = await updateTicketById(ticketId, ticket)
       if (response.status === "error") {
         message.error(response.message || "Ошибка при обновлении заявки")
         return
@@ -150,6 +96,7 @@ export function useTicketDetailsHelper() {
       message.success("Заявка успешно обновлена")
       ticketInfo.value = { ...response.payload }
     } catch (e) {
+      message.error("Ошибка при обновлении заявки")
       console.error("Error in updateTicket:", e)
     } finally {
       loading.value = false
@@ -166,11 +113,12 @@ export function useTicketDetailsHelper() {
       }
       message.success("Заявка успешно создана")
       ticketInfo.value = { ...response.payload }
+      await router.push({ name: "Tickets" })
     } catch (e) {
       console.error("Error in updateTicket:", e)
+      message.error("Ошибка при создании заявки")
     } finally {
       loading.value = false
-      await router.push({ name: "Tickets" })
     }
   }
 
@@ -179,11 +127,8 @@ export function useTicketDetailsHelper() {
     formValue,
     rules,
     loading,
-    checklists,
-    checklistItems,
     createTicket,
     updateTicket,
     initTicketById,
-    initCheckLists,
   }
 }

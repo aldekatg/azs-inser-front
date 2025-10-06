@@ -3,7 +3,7 @@ import { Response } from "@/types.ts"
 import { AuthPayload } from "@/api/auth/type.ts"
 
 const URLS = {
-  login: "/auth/employee/login",
+  login: "/auth/gas-station/login",
   refresh: "/auth/refresh",
 }
 

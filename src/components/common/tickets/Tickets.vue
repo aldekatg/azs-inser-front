@@ -15,74 +15,41 @@
       @apply="applyFilters"
     />
 
-    <!-- Tabs Section -->
-    <n-tabs
-      v-model:value="currentTabType"
-      type="segment"
-      animated
-      @update:value="changeTicketType"
-      class="tickets-component__tabs"
-    >
-      <n-tab-pane
-        v-for="tab in tabs"
-        :key="tab.name"
-        :name="tab.name"
-        :tab="tab.label"
-      >
-        <template #tab>
-          <div class="tab-content">
-            <span>{{ tab.label }}</span>
-            <n-tooltip v-if="tab.description" trigger="hover">
-              <template #trigger>
-                <n-icon :size="14" class="tab-icon">
-                  <InfoIcon />
-                </n-icon>
-              </template>
-              {{ tab.description }}
-            </n-tooltip>
-          </div>
-        </template>
+    <div class="tickets-component__table-container">
+      <base-table
+        :data="data"
+        :columns="columns"
+        :loading="loading"
+        :single-line="true"
+        :bordered="true"
+        :striped="true"
+        :hoverable="true"
+        :row-class-name="rowClassName"
+        :row-key="(row: any) => row.id"
+        class="tickets-table"
+      />
+    </div>
 
-        <!-- Table Section -->
-        <div class="tickets-component__table-container">
-          <base-table
-            :data="data"
-            :columns="columns"
-            :loading="loading"
-            :single-line="true"
-            :bordered="true"
-            :striped="true"
-            :hoverable="true"
-            :row-class-name="rowClassName"
-            :row-key="(row: any) => row.id"
-            class="tickets-table"
-          />
-        </div>
-
-        <!-- Pagination Section -->
-        <div v-if="hasData" class="tickets-component__pagination">
-          <n-pagination
-            v-model:page="pagination.page"
-            :item-count="pagination.total"
-            :page-size="pagination.per_page"
-            :show-quick-jumper="true"
-            :show-size-picker="true"
-            :page-sizes="[10, 20, 50, 100]"
-            @update:page="changePage"
-            @update:page-size="updatePageSize"
-          />
-        </div>
-      </n-tab-pane>
-    </n-tabs>
+    <!-- Pagination Section -->
+    <div v-if="hasData" class="tickets-component__pagination">
+      <n-pagination
+        v-model:page="pagination.page"
+        :item-count="pagination.total"
+        :page-size="pagination.per_page"
+        :show-quick-jumper="true"
+        :show-size-picker="true"
+        :page-sizes="[10, 20, 50, 100]"
+        @update:page="changePage"
+        @update:page-size="updatePageSize"
+      />
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-  import { computed } from "vue"
   import { useTickets } from "./composables/useTickets"
   import BaseTable from "@/components/base/BaseTable.vue"
   import TicketFilters from "./TicketFilters.vue"
-  import { InformationCircleOutline as InfoIcon } from "@vicons/ionicons5"
 
   // Composables
   const {
@@ -92,26 +59,19 @@
     filters,
     hasData,
     columns,
-    tabs,
-    changeTicketType,
     changePage,
     updatePageSize,
     navigateToCreate,
+    refreshTickets,
     applyFilters,
   } = useTickets()
-
-  // Computed
-  const currentTabType = computed({
-    get: () => filters.value.ticket_type || "customer_call",
-    set: (value) => changeTicketType(value as any),
-  })
 
   // Row class name function
   const rowClassName = (row: any) => {
     return row.is_sla_80_elapsed ? "sla-elapsed-row" : ""
   }
 
-  // Methods are now handled by the composable
+  onMounted(() => refreshTickets())
 </script>
 
 <style lang="scss" scoped>

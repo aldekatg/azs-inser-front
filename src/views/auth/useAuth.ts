@@ -2,8 +2,10 @@ import { ref } from "vue"
 import type { FormInst } from "naive-ui"
 import { useAuthStore } from "@/store/useAuthStore.ts"
 import { login } from "@/api/auth"
-import { regEmail } from "@/components/common/gas-stations/const.ts"
 import { useRouter } from "vue-router"
+
+// Простая регулярка для email
+const regEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 const { initAuth } = useAuthStore()
 

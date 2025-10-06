@@ -1,7 +1,41 @@
-import { EmployeeResponse } from "@/api/employees/types.ts"
-import { ChecklistType, GasStationType } from "@/api/gas-stations/types.ts"
 import { PaginationType } from "@/types.ts"
-import { WorkType } from "@/api/tariffs/types.ts"
+
+// Локальные типы для тикетов
+export interface EmployeeResponse {
+  id: number
+  name: string
+  email?: string
+  warehouse?: {
+    guid: string
+  }
+}
+
+export interface GasStationType {
+  id: number
+  name: string
+  address?: string
+  operator_name?: string
+}
+
+export interface WorkType {
+  id: number
+  code: string
+  description: string
+  technical_task_id: number
+}
+
+export interface ChecklistType {
+  id: number
+  technical_task_id: number
+  description: string
+  items: ChecklistItem[]
+}
+
+export interface ChecklistItem {
+  id: number
+  name: string
+  completed?: boolean
+}
 
 export interface TicketsResponse extends PaginationType {
   items: TicketDetails[]
@@ -43,7 +77,6 @@ export interface TicketDetails {
 }
 
 export interface TicketCreatePayload {
-  gas_station_id: number | null
   status: string
   criticality: string
   ticket_type: string
@@ -52,53 +85,25 @@ export interface TicketCreatePayload {
   technical_tasks_preview: string[]
   technical_tasks_details: TechnicalTaskDetail[]
   content: string
-  employee_id: number | null
-  employee: EmployeeResponse | null
-  service_sheet_number: number | null
-  comment: string | null
-  diagnostic_result: string | null
-  work_result: string | null
-  work_started_at?: string | number | Date
-  work_finished_at?: string | number | Date
-  materials: Record<string, any>
 }
 
 export interface TicketUpdatePayload {
-  gas_station_id: number | null
   status: string
   criticality: string
-  ticket_type: string
-  submitted_at: string | number | Date
-  planned_finish_at: string
-  closed_at: string | null
+  ticket_number: string
+  submitted_at: string
   technical_tasks_preview: string[]
   technical_tasks_details: TechnicalTaskDetail[]
   content: string
-  employee_id: number | null
-  employee: EmployeeResponse | null
-  comment: string | null
-  service_sheet_number: number | null
-  ticket_number: string | null
-  diagnostic_result: string | null
-  work_started_at: string | number | Date
-  work_finished_at: string | number | Date
-  work_result: string | null
-  materials: Record<string, any>
-  id: number | null
-  guid: string
-  created_at: string | number | Date
-  updated_at: string | number | Date
-  escalation_timeout_minutes: number
-  escalation_due_at: string | number | Date
 }
 
 export interface TechnicalTaskDetail {
   code: string
-  equipment?: any
+  equipment: string
   description: string
-  id: number | null
+  id: number
   work_types: WorkType[]
-  checklists?: ChecklistType[]
+  checklists: ChecklistType[]
 }
 
 export interface MaterialResponse {

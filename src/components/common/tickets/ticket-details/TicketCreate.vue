@@ -27,22 +27,14 @@
 
   const loading = ref(false)
   const formValue = ref<TicketCreatePayload>({
-    gas_station_id: null,
     status: "",
     criticality: "",
-    ticket_type: "",
+    ticket_type: "customer_call",
     ticket_number: "",
-    comment: "",
-    service_sheet_number: null,
-    diagnostic_result: "",
-    work_result: "",
     submitted_at: new Date().getTime(),
     technical_tasks_preview: [],
     technical_tasks_details: [],
     content: "",
-    employee_id: null,
-    employee: null,
-    materials: [],
   })
 
   const rules = {

@@ -18,9 +18,8 @@
       :form-data="formValue"
       :loading="loading"
       :ticket="ticketInfo"
-      :checklists="checklists"
-      :checklistItems="checklistItems"
       :rules="rules"
+      :ticket-id="Number(route.params.id)"
       @update="updateTicket"
       type="change"
     />
@@ -43,15 +42,11 @@
     formValue,
     ticketInfo,
     initTicketById,
-    checklists,
     updateTicket,
-    checklistItems,
-    initCheckLists,
   } = useTicketDetailsHelper()
 
   onMounted(() => {
     initTicketById(route.params.id)
-    initCheckLists()
   })
 </script>
 
