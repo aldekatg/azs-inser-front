@@ -15,17 +15,17 @@ export type MaterialItem = {
 export type TaskTab = { code: string; materials: MaterialItem[] }
 
 export interface TicketFilters {
-  q?: string
+  q?: string | null
   ticket_type?: string
-  statuses?: string[]
+  statuses?: string[] | null
   status_group?: string
-  gas_station_id?: number
-  employee_id?: number
-  guid?: string
-  submitted_from?: string
-  submitted_to?: string
-  created_from?: string
-  created_to?: string
+  gas_station_id?: number | null
+  employee_id?: number | null
+  guid?: string | null
+  submitted_from?: string | null
+  submitted_to?: string | null
+  created_from?: string | null
+  created_to?: string | null
   order_by?: string
   desc?: boolean
   limit?: number

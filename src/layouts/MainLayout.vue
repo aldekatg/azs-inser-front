@@ -33,6 +33,6 @@
   }
 
   .left-navigation {
-    height: 100vh;
+    height: calc(100vh - 70px);
   }
 </style>

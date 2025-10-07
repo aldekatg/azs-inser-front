@@ -14,16 +14,16 @@ export interface TicketFilters {
   limit: number
   skip: number
   // Новые фильтры
-  q?: string
-  statuses?: string[]
+  q?: string | null
+  statuses?: string[] | null
   status_group?: string
-  gas_station_id?: number
-  employee_id?: number
-  guid?: string
-  submitted_from?: string
-  submitted_to?: string
-  created_from?: string
-  created_to?: string
+  gas_station_id?: number | null
+  employee_id?: number | null
+  guid?: string | null
+  submitted_from?: string | null
+  submitted_to?: string | null
+  created_from?: string | null
+  created_to?: string | null
 }
 
 export function useTicketData() {
@@ -51,16 +51,16 @@ export function useTicketData() {
     limit: 10,
     skip: 0,
     // Новые фильтры с пустыми значениями
-    q: undefined,
-    statuses: undefined,
+    q: null,
+    statuses: null,
     status_group: undefined,
-    gas_station_id: undefined,
-    employee_id: undefined,
-    guid: undefined,
-    submitted_from: undefined,
-    submitted_to: undefined,
-    created_from: undefined,
-    created_to: undefined,
+    gas_station_id: null,
+    employee_id: null,
+    guid: null,
+    submitted_from: null,
+    submitted_to: null,
+    created_from: null,
+    created_to: null,
   })
 
   // Computed
@@ -73,6 +73,7 @@ export function useTicketData() {
 
   const applyFilters = async (newFilters?: Partial<TicketFilters>) => {
     if (newFilters) {
+      console.log("applyFilters", newFilters)
       updateFilters(newFilters)
     }
     resetPagination()

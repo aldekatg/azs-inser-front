@@ -3,6 +3,7 @@
     <n-form
       ref="formRef"
       :model="filters"
+      :key="formKey"
       label-width="auto"
       :show-feedback="false"
     >
@@ -32,11 +33,14 @@
         </n-form-item-gi>
 
         <!-- Сортировка -->
-        <n-form-item-gi label="Сортировка" path="order_by">
+        <n-form-item-gi label="Тип заявки" path="ticket_type">
           <n-select
-            v-model:value="filters.order_by"
-            :options="orderByOptions"
-            placeholder="Поле сортировки"
+            v-model:value="filters.ticket_type"
+            :options="[
+              { label: 'Вызовы', value: 'customer_call' },
+              { label: 'Планирование', value: 'planned' },
+            ]"
+            placeholder="Выберите тип заявки"
             class="w-100"
           />
         </n-form-item-gi>
@@ -45,6 +49,15 @@
       <!-- Дополнительные фильтры (скрываются/раскрываются) -->
       <div v-show="isExpanded" class="ticket-filters__expanded">
         <n-grid cols="1 500:2 800:3" :x-gap="16" :y-gap="16">
+          <!-- Сортировка -->
+          <n-form-item-gi label="Сортировка" path="order_by">
+            <n-select
+              v-model:value="filters.order_by"
+              :options="orderByOptions"
+              placeholder="Поле сортировки"
+              class="w-100"
+            />
+          </n-form-item-gi>
           <!-- АЗС -->
           <n-form-item-gi label="АЗС ID" path="gas_station_id">
             <n-input-number
@@ -158,12 +171,13 @@
   }>()
 
   const emit = defineEmits<{
-    (e: "update:filters", value: TicketFilters): void
-    (e: "apply"): void
+    "update:filters": [value: TicketFilters]
+    apply: []
   }>()
 
   const formRef = ref<FormInst | null>(null)
   const isExpanded = ref(false)
+  const formKey = ref(0)
 
   // Промежуточные timestamp-значения для date-picker'ов (ожидают number)
   const submittedFromTs = ref<number | null>(null)
@@ -188,16 +202,6 @@
     const iso = val ? new Date(val).toISOString() : undefined
     emit("update:filters", { ...props.filters, created_to: iso })
   })
-
-  // Сброс фильтров при смене типа заявки
-  watch(
-    () => props.filters.ticket_type,
-    (newType, oldType) => {
-      if (newType && oldType && newType !== oldType) {
-        resetFilters()
-      }
-    }
-  )
 
   // Опции для селектов
   const statusOptions = [
@@ -228,23 +232,22 @@
   }
 
   const resetFilters = () => {
-    const currentTicketType = props.filters.ticket_type
     const defaultFilters: TicketFilters = {
-      ticket_type: currentTicketType,
+      ticket_type: "customer_call",
       order_by: "id",
       desc: false,
       limit: 50,
       skip: 0,
-      // Сбрасываем все остальные фильтры
-      q: undefined,
-      statuses: undefined,
-      gas_station_id: undefined,
-      employee_id: undefined,
-      guid: undefined,
-      submitted_from: undefined,
-      submitted_to: undefined,
-      created_from: undefined,
-      created_to: undefined,
+      // Сбрасываем все остальные фильтры - используем null для визуального сброса
+      q: null,
+      statuses: null,
+      gas_station_id: null,
+      employee_id: null,
+      guid: null,
+      submitted_from: null,
+      submitted_to: null,
+      created_from: null,
+      created_to: null,
     }
 
     // Сбрасываем timestamp'ы для date picker'ов
@@ -252,6 +255,9 @@
     submittedToTs.value = null
     createdFromTs.value = null
     createdToTs.value = null
+
+    // Принудительно перерендериваем форму для визуального сброса
+    formKey.value++
 
     emit("update:filters", defaultFilters)
     emit("apply")

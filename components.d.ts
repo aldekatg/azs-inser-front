@@ -38,6 +38,7 @@ declare module 'vue' {
     NSkeleton: typeof import('naive-ui')['NSkeleton']
     NSpace: typeof import('naive-ui')['NSpace']
     NTree: typeof import('naive-ui')['NTree']
+    NUpload: typeof import('naive-ui')['NUpload']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     TechnicalTasksTree: typeof import('./src/components/common/tickets/ticket-details/sections/TechnicalTasksTree.vue')['default']
