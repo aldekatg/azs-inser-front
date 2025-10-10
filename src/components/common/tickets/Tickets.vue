@@ -15,6 +15,37 @@
       @apply="applyFilters"
     />
 
+    <!-- Tabs Section -->
+    <n-tabs
+      v-model:value="currentTabType"
+      type="segment"
+      animated
+      @update:value="changeTicketType"
+      class="tickets-component__tabs"
+    >
+      <n-tab-pane
+        v-for="tab in tabs"
+        :key="tab.name"
+        :name="tab.name"
+        :tab="tab.label"
+      >
+        <template #tab>
+          <div class="tab-content">
+            <span>{{ tab.label }}</span>
+            <n-tooltip v-if="tab.description" trigger="hover">
+              <template #trigger>
+                <n-icon :size="14" class="tab-icon">
+                  <InfoIcon />
+                </n-icon>
+              </template>
+              {{ tab.description }}
+            </n-tooltip>
+          </div>
+        </template>
+      </n-tab-pane>
+    </n-tabs>
+
+    <!-- Table Section -->
     <div class="tickets-component__table-container">
       <base-table
         :data="data"
@@ -27,6 +58,7 @@
         :row-class-name="rowClassName"
         :row-key="(row: any) => row.id"
         class="tickets-table"
+        @update:sorter="handleSorterChange"
       />
     </div>
 
@@ -47,9 +79,11 @@
 </template>
 
 <script lang="ts" setup>
+  import { computed } from "vue"
   import { useTickets } from "./composables/useTickets"
   import BaseTable from "@/components/base/BaseTable.vue"
   import TicketFilters from "./TicketFilters.vue"
+  import { InformationCircleOutline as InfoIcon } from "@vicons/ionicons5"
 
   // Composables
   const {
@@ -59,19 +93,27 @@
     filters,
     hasData,
     columns,
+    tabs,
+    changeTicketType,
     changePage,
     updatePageSize,
+    handleSorterChange,
     navigateToCreate,
-    refreshTickets,
     applyFilters,
   } = useTickets()
+
+  // Computed
+  const currentTabType = computed({
+    get: () => filters.value.ticket_type || "customer_call",
+    set: (value) => changeTicketType(value as any),
+  })
 
   // Row class name function
   const rowClassName = (row: any) => {
     return row.is_sla_80_elapsed ? "sla-elapsed-row" : ""
   }
 
-  onMounted(() => refreshTickets())
+  // Methods are now handled by the composable
 </script>
 
 <style lang="scss" scoped>
@@ -82,7 +124,6 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: rem(24);
       padding-bottom: rem(16);
       border-bottom: 1px solid var(--n-border-color);
     }
@@ -99,7 +140,6 @@
     }
 
     &__table-container {
-      max-height: 500px;
       margin-bottom: rem(20);
       overflow-x: auto;
       border: 1px solid var(--n-border-color);

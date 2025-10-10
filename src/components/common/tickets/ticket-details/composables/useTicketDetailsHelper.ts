@@ -30,24 +30,34 @@ export function useTicketDetailsHelper() {
   })
   const rules = {
     ticket_number: {
-      required: true,
-      type: "text",
-      message: "Номер заявки обязателен",
+      required: false,
+      message: "Номер заявки должен быть строкой",
       trigger: ["blur", "input"],
     },
     status: {
       required: true,
       message: "Статус обязателен",
       trigger: ["blur", "input"],
+      validator: (_rule: any, value: string) => {
+        if (!value || value === "") {
+          return new Error("Выберите статус")
+        }
+        return true
+      },
     },
     criticality: {
       required: true,
       message: "Критичность обязательна",
       trigger: ["blur", "input"],
+      validator: (_rule: any, value: string) => {
+        if (!value || value === "") {
+          return new Error("Выберите критичность")
+        }
+        return true
+      },
     },
     submitted_at: {
       required: true,
-      type: "string",
       message: "Дата подачи обязательна",
       trigger: ["blur", "change"],
     },
@@ -55,6 +65,15 @@ export function useTicketDetailsHelper() {
       required: true,
       message: "Содержимое заявки обязательно",
       trigger: ["blur", "input"],
+      validator: (_rule: any, value: string) => {
+        if (!value || value.trim() === "") {
+          return new Error("Введите описание заявки")
+        }
+        if (value.length < 10) {
+          return new Error("Описание должно содержать минимум 10 символов")
+        }
+        return true
+      },
     },
   }
 
@@ -79,6 +98,8 @@ export function useTicketDetailsHelper() {
       }
       ticketInfo.value = response.payload
     } catch (e) {
+      message.error("Ошибка при загрузке заявки")
+      // eslint-disable-next-line no-console
       console.error("Error in initTicketById:", e)
     } finally {
       loading.value = false
@@ -99,10 +120,10 @@ export function useTicketDetailsHelper() {
       ticketInfo.value = { ...response.payload }
       await router.push({ name: "Tickets" })
     } catch (e) {
-      console.log((e as any).response.data.message)
-      message.error(
-        (e as any).response.data.message || "Ошибка при создании заявки"
-      )
+      const errorMessage =
+        (e as any).response?.data?.message || "Ошибка при обновлении заявки"
+      message.error(errorMessage)
+      // eslint-disable-next-line no-console
       console.error("Error in updateTicket:", e)
     } finally {
       loading.value = false
@@ -122,11 +143,11 @@ export function useTicketDetailsHelper() {
       ticketInfo.value = { ...response.payload }
       await router.push({ name: "Tickets" })
     } catch (e) {
-      console.error("Error in updateTicket:", e)
-      console.log((e as any).response.data.message)
-      message.error(
-        (e as any).response.data.message || "Ошибка при создании заявки"
-      )
+      const errorMessage =
+        (e as any).response?.data?.message || "Ошибка при создании заявки"
+      message.error(errorMessage)
+      // eslint-disable-next-line no-console
+      console.error("Error in createTicket:", e)
     } finally {
       loading.value = false
     }

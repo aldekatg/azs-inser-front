@@ -36,7 +36,7 @@
                 :loading="loading"
               />
             </n-form-item-gi>
-            <n-form-item-gi label="Статус" path="status">
+            <n-form-item-gi label="Статус" path="status" v-if="isUpdateForm">
               <n-select
                 v-model:value="formValue.status"
                 :options="getStatusOptions"
@@ -119,11 +119,13 @@
   >()
 
   const emit = defineEmits<{
-    (e: "create", data: TicketCreatePayload): void
-    (e: "update", data: TicketUpdatePayload, ticketId: number): void
+    create: [data: TicketCreatePayload]
+    update: [data: TicketUpdatePayload, ticketId: number]
   }>()
 
+  const formRef = ref<any>(null)
   const formValue = ref<TicketCreatePayload | TicketUpdatePayload>(formData)
+  const message = useMessage()
 
   const getStatusOptions = computed(() => {
     // if (isUpdateForm.value) {
@@ -148,11 +150,22 @@
     formValue.value.technical_tasks_preview = selected.map((task) => task.code)
   }
 
-  function saveTicket() {
-    if (isUpdateForm.value && ticketId) {
-      emit("update", formValue.value as TicketUpdatePayload, ticketId)
-    } else {
-      emit("create", formValue.value as TicketCreatePayload)
+  async function saveTicket() {
+    // Валидация формы перед сохранением
+    if (!formRef.value) return
+
+    try {
+      await formRef.value.validate()
+
+      if (isUpdateForm.value && ticketId) {
+        emit("update", formValue.value as TicketUpdatePayload, ticketId)
+      } else {
+        emit("create", formValue.value as TicketCreatePayload)
+      }
+    } catch (error) {
+      message.error("Пожалуйста, заполните все обязательные поля корректно")
+      // eslint-disable-next-line no-console
+      console.error("Validation failed:", error)
     }
   }
 

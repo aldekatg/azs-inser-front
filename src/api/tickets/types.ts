@@ -14,6 +14,7 @@ export interface GasStationType {
   id: number
   name: string
   address?: string
+  object_number?: string
   operator_name?: string
 }
 

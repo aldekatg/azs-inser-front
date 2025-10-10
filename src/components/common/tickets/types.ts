@@ -15,8 +15,13 @@ export type MaterialItem = {
 export type TaskTab = { code: string; materials: MaterialItem[] }
 
 export interface TicketFilters {
+  ticket_type: "customer_call" | "planned" | string
+  order_by: string
+  desc: boolean
+  limit: number
+  skip: number
+  // Опциональные фильтры
   q?: string | null
-  ticket_type?: string
   statuses?: string[] | null
   status_group?: string
   gas_station_id?: number | null
@@ -26,8 +31,4 @@ export interface TicketFilters {
   submitted_to?: string | null
   created_from?: string | null
   created_to?: string | null
-  order_by?: string
-  desc?: boolean
-  limit?: number
-  skip?: number
 }

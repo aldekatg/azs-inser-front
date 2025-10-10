@@ -1,4 +1,4 @@
-import { computed } from "vue"
+import { onMounted, computed } from "vue"
 import { useTicketData } from "./useTicketData"
 import { useTicketColumns } from "./useTicketColumns"
 import { useTicketTabs } from "./useTicketTabs"
@@ -11,6 +11,17 @@ export function useTickets() {
   const currentTab = computed(() =>
     ticketTabs.getTabByType(ticketData.filters.value.ticket_type)
   )
+
+  const initializeTickets = async () => {
+    console.log("Инициализация заявок...")
+    ticketData.initializeFromRoute()
+    await ticketData.loadTickets()
+  }
+
+  onMounted(() => {
+    console.log("Компонент Tickets смонтирован")
+    initializeTickets()
+  })
 
   return {
     // Data
@@ -33,6 +44,7 @@ export function useTickets() {
     changeTicketType: ticketData.changeTicketType,
     changePage: ticketData.changePage,
     updatePageSize: ticketData.updatePageSize,
+    handleSorterChange: ticketData.handleSorterChange,
     navigateToTicket: ticketData.navigateToTicket,
     navigateToCreate: ticketData.navigateToCreate,
     refreshTickets: () => ticketData.loadTickets(),

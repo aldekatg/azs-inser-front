@@ -27,7 +27,7 @@
 
   const loading = ref(false)
   const formValue = ref<TicketCreatePayload>({
-    status: "",
+    status: "new",
     criticality: "",
     ticket_type: "customer_call",
     ticket_number: "",
@@ -38,41 +38,46 @@
   })
 
   const rules = {
-    gas_station_id: {
-      type: "number",
+    ticket_number: {
       required: true,
-      message: "АЗС обязательна",
+      message: "Номер заявки обязателен",
+      trigger: ["blur", "input"],
+    },
+    submitted_at: {
+      required: true,
+      type: "number",
+      message: "Дата подачи заявки обязательна",
       trigger: ["blur", "change"],
     },
+    criticality: {
+      required: true,
+      message: "Критичность обязательна",
+      trigger: ["blur", "change"],
+      validator: (_rule: any, value: string) => {
+        if (!value || value === "") {
+          return new Error("Выберите критичность")
+        }
+        return true
+      },
+    },
     status: {
-      type: "string",
       required: true,
       message: "Статус обязателен",
       trigger: ["blur", "change"],
     },
-    criticality: {
-      type: "string",
-      required: true,
-      message: "Критичность обязательна",
-      trigger: ["blur", "change"],
-    },
-    ticket_type: {
-      type: "string",
-      required: true,
-      message: "Тип заявки обязателен",
-      trigger: ["blur", "change"],
-    },
     content: {
-      type: "string",
       required: true,
-      message: "Описание обязательно",
+      message: "Описание заявки обязательно",
       trigger: ["blur", "input"],
-    },
-    employee_id: {
-      type: "number",
-      required: true,
-      message: "Ответственный обязателен",
-      trigger: ["blur", "change"],
+      validator: (_rule: any, value: string) => {
+        if (!value || value.trim() === "") {
+          return new Error("Введите описание заявки")
+        }
+        if (value.length < 10) {
+          return new Error("Описание должно содержать минимум 10 символов")
+        }
+        return true
+      },
     },
   }
 

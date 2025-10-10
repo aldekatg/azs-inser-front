@@ -66,21 +66,51 @@ export const handleUpdateSorter = (
   initFunction(sortedFields)
 }
 
-// DD.MM.YYYY
+// Конвертация UTC в UTC+5 и форматирование
+const UTC_OFFSET = 5 * 60 * 60 * 1000 // UTC+5 в миллисекундах
+
+function toUTC5(date: Date): Date {
+  return new Date(date.getTime() + UTC_OFFSET)
+}
+
+function pad(num: number): string {
+  return num.toString().padStart(2, "0")
+}
+
+// DD.MM.YYYY (UTC+5)
 export function dateStr(date: string): string {
-  if (date) {
-    const splitted = date.split(/[-T.Z]/)
-    return `${splitted[2]}.${splitted[1]}.${splitted[0]}`
-  } else {
+  if (!date) return "..."
+
+  try {
+    const utcDate = new Date(date)
+    const utc5Date = toUTC5(utcDate)
+
+    const day = pad(utc5Date.getUTCDate())
+    const month = pad(utc5Date.getUTCMonth() + 1)
+    const year = utc5Date.getUTCFullYear()
+
+    return `${day}.${month}.${year}`
+  } catch {
     return "..."
   }
 }
-// DD.MM.YYYY HH:MM
+
+// DD.MM.YYYY HH:MM (UTC+5)
 export function dateTime(date: string): string {
-  if (date) {
-    const splitted = date.split(/[-T.Z]/)
-    return `${splitted[2]}.${splitted[1]}.${splitted[0]} ${splitted[3]}`
-  } else {
+  if (!date) return "..."
+
+  try {
+    const utcDate = new Date(date)
+    const utc5Date = toUTC5(utcDate)
+
+    const day = pad(utc5Date.getUTCDate())
+    const month = pad(utc5Date.getUTCMonth() + 1)
+    const year = utc5Date.getUTCFullYear()
+    const hours = pad(utc5Date.getUTCHours())
+    const minutes = pad(utc5Date.getUTCMinutes())
+
+    return `${day}.${month}.${year} ${hours}:${minutes}`
+  } catch {
     return "..."
   }
 }
